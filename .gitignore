@@ -1,2 +1,11 @@
 *.class
 *.log
+
+# build tooling
+.bsp/
+.scala-build/
+.metals/
+.vscode/
+
+# project
+test-data/csv-1.md
