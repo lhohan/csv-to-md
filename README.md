@@ -14,9 +14,11 @@ Tool: `scala-cli`
 
 Commands:
 
-- `scala-cli run main.scala csv-to-md.scala -- -h`
-    - Prints usage
+- Prints usage:
+    - `scala-cli run main.scala csv-to-md.scala -- -h`
 - Convert single file:
     - ` scala-cli run main.scala csv-to-md.scala -- -f test-data/csv-1.csv`
 - Convert all csv files in a directory (`~/Downloads`):
     - `scala-cli run main.scala csv-to-md.scala -- -d ~/Downloads`    
+- Run tests:
+    - `scala-cli test . --watch`    
