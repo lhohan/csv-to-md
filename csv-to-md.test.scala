@@ -52,6 +52,16 @@ class CsvToMdTest
       )
   }
 
+  test("csv line to fields -- quoted fields") {
+    toFields(
+      List("h1,h2,h3", """"f1,with comma","f2,with comma","f3,with comma"""")
+    ).right.value shouldBe
+      List(
+        List("h1", "h2", "h3"),
+        List("f1,with comma", "f2,with comma", "f3,with comma")
+      )
+  }
+
   test("fields to md line") {
     toMd(
       List(

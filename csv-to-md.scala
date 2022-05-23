@@ -1,8 +1,11 @@
+//> using lib "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.3"
 import java.io.File
 import java.nio.file.Files
 import scala.io.Source
 import java.nio.file.Path
 import java.nio.file.Paths
+import com.fasterxml.jackson.dataformat.csv.CsvMapper
+import com.fasterxml.jackson.dataformat.csv.CsvParser
 
 def csvToMdFile(csvFile: File): Either[String, File] =
   if (!Files.exists(csvFile.toPath))
@@ -48,7 +51,15 @@ def convertToMd(csvLines: List[String]): Either[String, List[String]] =
   } yield md
 
 def toFields(csvLines: List[String]): Either[String, List[List[String]]] =
-  Right(csvLines.map(_.split(',').toList))
+  import scala.jdk.CollectionConverters.*
+  val csvFull = csvLines.mkString("\n")
+  val mapper = new CsvMapper()
+    .readerForListOf(classOf[String])
+    .`with`(CsvParser.Feature.WRAP_AS_ARRAY)
+  val all: java.util.List[java.util.List[String]] =
+    mapper.readValues(csvFull).readAll
+  val allScala = all.asScala.toList.map(_.asScala.toList)
+  Right(allScala)
 
 def toMd(fields: List[List[String]]): Either[String, List[String]] =
   val result = fields match
