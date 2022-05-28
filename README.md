@@ -2,10 +2,6 @@
 
 A simple csv to markdown convertor for easier viewing of a csv.
 
-## Status of project
-
-Simple parsing of csv works.
-
 ## Usage
 
 Requires `java` to be installed.
