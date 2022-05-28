@@ -16,16 +16,30 @@ object CsvToMarkdown {
         }
     }
 
+  // arg parsing is succesfull if a least one file is passed
   def parseArgs(args: Array[String]): Either[String, List[File]] =
+    parseArgs(args, readFilesIn)
+
+  // arg parsing is succesfull if a least one file is passed
+  def parseArgs(
+      args: Array[String],
+      readFilesIn: String => Either[String, List[File]]
+  ): Either[String, List[File]] =
     args match
       case Array("-h")       => Left(helpMsg)
       case Array("-f")       => Left("File argument is missing!\n" + helpMsg)
       case Array("-f", file) => Right(List(new File(file)))
       case Array("-d") => Left("Directory argument is missing!\n" + helpMsg)
-      case Array("-d", maybeDir) => readFilesIn(maybeDir)
-      case _                     => Left(helpMsg)
+      case Array("-d", maybeDir) =>
+        readFilesIn(maybeDir).flatMap { files =>
+          if (files.isEmpty)
+            Left(s"No csv files found in $maybeDir")
+          else
+            Right(files)
+        }
+      case _ => Left(helpMsg)
 
-  def helpMsg: String =
+  val helpMsg: String =
     s"""|Usage:
                      |  -d <directory>  : convert all files in directory
                      |  -f <csv file>   : convert single file 
@@ -37,10 +51,10 @@ object CsvToMarkdown {
 
   def readFilesIn(maybeDir: String): Either[String, List[File]] =
     val dirFile = new File(maybeDir)
-    if (!dirFile.isDirectory)
-      Left(errorMsg(s"$maybeDir is not a directory!"))
+    if (!dirFile.isDirectory) Left(errorMsg(s"$maybeDir is not a directory!"))
     else
-      dirFile.listFiles.filter(f => f.getName.endsWith(".csv")) match
-        case Array() => Left(s"No csv files found in $maybeDir")
-        case csvs    => Right(csvs.toList)
+      val csvFiles =
+        dirFile.listFiles.filter(f => f.getName.endsWith(".csv")).toList
+      Right(csvFiles)
+
 }
