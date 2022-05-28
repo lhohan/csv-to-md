@@ -1,0 +1,21 @@
+name: Release
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: VirtusLab/scala-cli-setup@main
+        with:
+          jvm: zulu:18.0.1
+          scala-cli-version: 0.1.5
+      - run: ./run-release-artifacts.sh
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: csv-to-md
