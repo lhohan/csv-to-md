@@ -1,0 +1,12 @@
+name: csv-to-md-tests
+on: [push]
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: VirtusLab/scala-cli-setup@main
+        with:
+          jvm: zulu:18.0.1
+          scala-cli-version: 0.1.5
+      - run: ./run-tests.sh
